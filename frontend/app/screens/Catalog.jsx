@@ -1,15 +1,19 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, FlatList, Image, Text, SafeAreaView  } from 'react-native';
+import { StyleSheet, View, TextInput, FlatList, Image, Text, SafeAreaView, TouchableOpacity  } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+// import { NavigationContainer } from '@react-navigation/native';
 import DATA from '../../database.json'
+import Popup from './Popup';
 
-
-const Item = ({ image }) => (
-  <View style={styles.item}>
-    <Image source={{uri: image}} style={styles.image} />
-  </View>
+const Item = ({ image, onPress }) => (
+  <TouchableOpacity onPress={onPress}>
+    <View style={styles.item}>
+      <Image source={{ uri: image }} style={styles.image} />
+    </View>
+  </TouchableOpacity>
 );
 
-const Catalog = () => {
+const Catalog = ({ navigation }) => {
   const totalItems = DATA.length;
   const foundItems = DATA.filter(item => item.found).length;
 
@@ -28,7 +32,8 @@ const Catalog = () => {
       </View>
       <FlatList
         data={DATA}
-        renderItem={({ item }) => <Item image={item.image} />}
+        renderItem={({ item }) => <Item image={item.image}
+        onPress={() => navigation.navigate('Popup', { image: item.image })} />}
         keyExtractor={item => item.id}
         numColumns={3}
         style={{marginTop: 20}}
@@ -78,4 +83,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Catalog;
+const Stack = createStackNavigator();
+
+const CatalogStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Catalog" component={Catalog} />
+      <Stack.Screen name="Popup" component={Popup} />
+    </Stack.Navigator>
+  );
+};
+
+export default CatalogStack;
