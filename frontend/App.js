@@ -9,6 +9,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './FirebaseConfig';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements';
+import Catalog from './app/screens/Catalog';
 import Profile from './app/screens/Profile';
 import { TouchableOpacity } from 'react-native';
 
@@ -16,7 +17,7 @@ const Tab = createBottomTabNavigator();
 
 function MyTabBar({ state, descriptors, navigation }) {
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 10, backgroundColor: 'black' }}>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 10, paddingTop: 10, backgroundColor: 'black' }}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -26,8 +27,10 @@ function MyTabBar({ state, descriptors, navigation }) {
             ? options.title
             : route.name;
 
+
+        const isCatalog = label.toLowerCase().includes('catalog');
         const isProfile = label.toLowerCase().includes('profile');
-        const isHome = label.toLowerCase().includes('home')
+        const isHome = label.toLowerCase().includes('home');
 
         const onPress = () => {
           const event = navigation.emit({
@@ -48,6 +51,8 @@ function MyTabBar({ state, descriptors, navigation }) {
           iconName = 'user-circle';
         } else if (isHome) {
           iconName = 'home';
+        } else if (isCatalog) {
+          iconName = 'rocket'
         }
 
         return (
@@ -55,11 +60,7 @@ function MyTabBar({ state, descriptors, navigation }) {
             key={label}
             onPress={onPress}
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            {isProfile ? (
-              <Icon name={iconName} type="font-awesome" size={24} color={isFocused ? 'tomato' : 'gray'} />
-            ) : (
-              <Icon name={iconName} type="font-awesome" size={24} color={isFocused ? 'tomato' : 'gray'} />
-            )}
+              <Icon name={iconName} type="font-awesome" size={24} color={isFocused ? '#e76011' : 'gray'} />
           </TouchableOpacity>
         );
       })}
@@ -77,7 +78,8 @@ function InsideLayout() {
   return (
     <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen name="Catalog" component={Catalog} />
+      <Tab.Screen name="Profile" component={Profile}/>
       {/* Add more Tab.Screen components as needed */}
     </Tab.Navigator>
   );

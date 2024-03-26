@@ -2,31 +2,31 @@
     {
       "id": "1",
       "name": "Bulbasaur",
-      "image": "../../assets/bulbasaur_full.png",
+      "image": "https://storage.googleapis.com/illinigo/bulbasaur_full.png",
       "found": true
     },
     {
       "id": "2",
       "name": "Charizard",
-      "image": "../../assets/charizard_full.png",
+      "image": "https://storage.googleapis.com/illinigo/charizard_full.png",
       "found": true
     },
     {
       "id": "3",
       "name": "Pikachu",
-      "image": "../../assets/pikachu_full.png",
+      "image": "https://storage.googleapis.com/illinigo/pikachu_full.png",
       "found": true
     },
     {
       "id": "4",
       "name": "Snorlax",
-      "image": "../../assets/snorlax_full.png",
+      "image": "https://storage.googleapis.com/illinigo/snorlax_full.png",
       "found": true
     },
     {
       "id": "5",
       "name": "Rayquaza",
-      "image": "../../assets/rayquaza_full.png",
+      "image": "https://storage.googleapis.com/illinigo/rayquaza_full.png",
       "found": true
     }
   ]

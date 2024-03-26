@@ -1,79 +1,75 @@
-import React from 'react';
-import { StyleSheet, View, TextInput, FlatList, Image, Text, SafeAreaView  } from 'react-native';
-import DATA from '../../database.json'
-
-
-
-
-
-const Item = ({ image }) => (
-  <View style={styles.item}>
-    <Image source={image} style={styles.image} />
-  </View>
-);
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
 
 const Profile = () => {
-  const totalItems = DATA.length;
-  const foundItems = DATA.filter(item => item.found).length;
+  const [username, setUsername] = useState('');
+  const [profilePic, setProfilePic] = useState('https://via.placeholder.com/150');
+  const uid = FIREBASE_AUTH.currentUser.uid;
 
-  console.log(DATA)
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/user/${uid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const userData = await response.json();
+        setUsername(userData.username);
+        if (userData.pfp != "") {
+            setProfilePic(userData);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [uid]); 
+
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.catalogTitle}>Catalog</Text>
-        <Text style={styles.foundText}>Found: {foundItems}/{totalItems}</Text>
-      </View>
-      <View style={styles.searchContainer}>
-        <TextInput
-          placeholder="Search for a critter"
-          style={styles.searchInput}
-        />
-      </View>
-      <FlatList
-        data={DATA}
-        renderItem={({ item }) => <Item image={item.image} />}
-        keyExtractor={item => item.id}
-        numColumns={2}
+    <View style={styles.container}>
+      <Image
+        source={{ uri: 'https://via.placeholder.com/150' }}
+        style={styles.profilePic}
       />
-    </SafeAreaView>
+      <Text style={styles.username}>{username}</Text>
+      <TouchableOpacity onPress={() => FIREBASE_AUTH.signOut()} style={styles.logoutButton}>
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#f7f7f7',
+    paddingTop: 60,
   },
-  headerContainer: {
-    paddingHorizontal: 10,
-    paddingTop: 20,
+  profilePic: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 16,
   },
-  catalogTitle: {
+  username: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
+    marginBottom: 24,
   },
-  foundText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 10,
+  logoutButton: {
+    backgroundColor: '#e76011',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
   },
-  searchContainer: {
-    padding: 10,
-  },
-  searchInput: {
-    height: 40,
-    borderWidth: 1,
-    padding: 10,
-  },
-  item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
-    margin: 8,
-  },
-  image: {
-    width: 100,
-    height: 100,
+  logoutButtonText: {
+    color: 'white',
+    fontSize: 18,
   },
 });
 
