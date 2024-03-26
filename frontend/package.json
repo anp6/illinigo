@@ -17,6 +17,7 @@
     "expo-file-system": "~16.0.6",
     "expo-font": "^11.10.3",
     "expo-gl": "~13.6.0",
+    "expo-image-picker": "^14.7.1",
     "expo-media-library": "~15.9.1",
     "expo-status-bar": "~1.11.1",
     "firebase": "^10.8.0",

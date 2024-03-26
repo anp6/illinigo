@@ -17,7 +17,7 @@ const Profile = () => {
         const userData = await response.json();
         setUsername(userData.username);
         if (userData.pfp != "") {
-            setProfilePic(userData);
+            setProfilePic(userData.pfp);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -31,7 +31,7 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: 'https://via.placeholder.com/150' }}
+        source={{ uri: profilePic }}
         style={styles.profilePic}
       />
       <Text style={styles.username}>{username}</Text>

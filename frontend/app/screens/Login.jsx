@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import * as Font from 'expo-font'
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default function Login() {
@@ -28,6 +29,30 @@ export default function Login() {
 
   }
 
+  const uploadImage = async (imageUri) => {
+    const fileName = `uploads/${new Date().toISOString()}_${imageUri.split('/').pop()}`;
+    console.log(fileName)
+    const response = await fetch(`http://localhost:3000/generate-signed-url?fileName=${fileName}`);
+    const { url } = await response.json();
+  
+    const blob = await fetch(imageUri).then(res => res.blob());
+  
+    const uploadResponse = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+      },
+      body: blob,
+    });
+  
+    if (uploadResponse.ok) {
+      console.log('Upload successful');
+      return "https://storage.googleapis.com/illinigo/" + fileName;
+    } else {
+      console.error('Upload failed');
+    }
+  };
+
   useEffect(() => {
     async function loadFonts() {
       await Font.loadAsync({
@@ -40,9 +65,35 @@ export default function Login() {
 
   const signUp = async () => {
     setLoading(true);
+    if (password != confirmPassword) {
+      alert("Passwords do not match.")
+      return;
+    }
+    if (username === "") {
+      alert("Username is required.")
+    }
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password);
-      alert('Check your Email')
+      let pfpUrl = "";
+      if (profilePicUri != null) {
+        pfpUrl = await uploadImage(profilePicUri); // Upload image and get the URL
+      }
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userData = {
+      id: userCredential.user.uid,
+      username: username,
+      pictureids: [],
+      pictures: "",
+      found: [],
+      pfp: pfpUrl,
+    };
+    const response = await fetch('http://localhost:3000/create-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+    console.log(response, "HEY")
     } catch (error) {
       alert('Sign Up Failed: ' + error.message);
     } finally {
@@ -50,6 +101,21 @@ export default function Login() {
     }
 
   }
+
+  const addImage = async () => {
+    let _image = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4,3],
+      quality: 1,
+    });
+    console.log(_image)
+    if (!_image.canceled) {
+      setProfilePicUri(_image.assets[0].uri);
+    }
+  }
+
+
   if (!fontsLoaded) {
     return <ActivityIndicator size="large" />; // Or some other placeholder content
   }
@@ -94,7 +160,7 @@ export default function Login() {
             />
             <TouchableOpacity
               style={createStyles.profilePicUploader}
-              onPress={() => {/* Logic to handle profile picture upload */}}
+              onPress={addImage}
             >
               {profilePicUri ? (
                 <Image source={{ uri: profilePicUri }} style={createStyles.profilePic} />
@@ -251,6 +317,7 @@ const createStyles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     marginBottom: 20,
+    marginTop: 20,
   },
   profilePic: {
     height: '100%',
