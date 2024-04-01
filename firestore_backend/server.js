@@ -1,0 +1,80 @@
+const admin = require('firebase-admin');
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+const serviceAccount = require('./secret.json');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+
+const db = admin.firestore();
+
+const {Storage} = require('@google-cloud/storage');
+const storage = new Storage({keyFilename: "./secret_bucket.json"});
+const bucketName = 'illinigo';
+const PORT = 3000;
+
+app.get('/generate-signed-url', async (req, res) => {
+  try {
+      const options = {
+          version: 'v4',
+          action: 'write',
+          expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+          contentType: 'application/octet-stream',
+      };
+
+      const [url] = await storage.bucket(bucketName).file(req.query.fileName).getSignedUrl(options);
+      res.send({url});
+  } catch (error) {
+      console.error('Error generating signed URL', error);
+      res.status(500).send('Error generating signed URL');
+  }
+});
+
+app.get('/user/:userId', async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const userDoc = await db.collection('users').doc(userId).get();
+
+        if (!userDoc.exists) {
+        return res.status(404).send("User not found");
+        }
+
+        const userData = userDoc.data();
+        return res.status(200).json(userData);
+    } catch (error) {
+        console.error("Error getting user data", error);
+        return res.status(500).send(error);
+    }
+});
+
+const addUserWithId = async (userId, userData) => {
+    try {
+      const docRef = db.collection('users').doc(userId);
+      await docRef.set(userData);
+      console.log('Document written with ID: ', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error adding document: ', error);
+      throw error;
+    }
+  };
+
+app.post('/create-user', async (req, res) => {
+    try {
+      const { id, ...userData } = req.body;
+      const docId = await addUserWithId(id, userData);
+      res.status(201).send({ id: docId });
+    } catch (error) {
+      res.status(400).send(error.message);
+    }
+  });
+
+
+app.listen(PORT, () => {
+console.log(`Server is running on port ${PORT}`);
+});
