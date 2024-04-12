@@ -18,11 +18,11 @@ const characterSchema = new mongoose.Schema({
     required: [true, "Critter 3D-model render"]
   },// TBD: A method of storing the 3d model of the character
   spawnLocations: [{
-    radius: {
-      type: Number,
-      required: [true, "Spawn radius"],
-      default: 1 // if unspecified, the spawn radius is 1m (Subject to change)
-    },
+    // radius: {
+    //   type: Number,
+    //   required: [true, "Spawn radius"],
+    //   default: 1 // if unspecified, the spawn radius is 1m (Subject to change)
+    // },
     location: // Stores a coordinate point and a radius around the point within which the character can spawn
     {
       type: {
