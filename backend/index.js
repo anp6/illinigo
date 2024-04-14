@@ -14,7 +14,7 @@ let uri = `mongodb+srv://${user_id}:${password}@test.jltbpk9.mongodb.net/?retryW
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log('Server is running on port 3000');
 });
 
