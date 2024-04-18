@@ -1,3 +1,4 @@
+require('dotenv').config({path: './.env'})
 const express = require('express')
 const mongoose = require('mongoose');
 const Character = require('./models/character.model.js');
@@ -5,8 +6,8 @@ const app = express()
 
 // const user_id = process.env.USER_ID
 // const password = process.env.PASSWORD
-const user_id = 'admin'
-const password = 'Y60EFoBqRd9oe7a4'
+const user_id = process.env.USER_ID
+const password = process.env.PASSWORD
 // uri string should be actual database in practice, this is just a test url
 let uri = `mongodb+srv://${user_id}:${password}@test.jltbpk9.mongodb.net/?retryWrites=true&w=majority&appName=test`;
 
@@ -15,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 app.listen(3001, () => {
-    console.log('Server is running on port 3000');
+    console.log('Server is running on port 3001');
 });
 
 // routes
