@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import {
+  FIREBASE_URL
+} from '@env';
 
 const Profile = () => {
   const [username, setUsername] = useState('');
@@ -10,7 +13,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/user/${uid}`);
+        const response = await fetch(`https://illinigodeployed-1.onrender.com/user/${uid}`);
         if (!response.ok) {
           throw new Error('Failed to fetch user data');
         }

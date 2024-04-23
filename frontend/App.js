@@ -6,12 +6,20 @@ import Login from './app/screens/Login';
 import Home from './app/screens/Home';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { FIREBASE_AUTH } from './FirebaseConfig';
+import { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE_DB } from './FirebaseConfig';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements';
 import Catalog from './app/screens/Catalog';
 import Profile from './app/screens/Profile';
 import { TouchableOpacity } from 'react-native';
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID
+} from '@env';
 
 const Tab = createBottomTabNavigator();
 
@@ -87,12 +95,13 @@ function InsideLayout() {
 
 export default function App() {
   const [user, setUser] = useState(null);
-
+  console.log("HELLO WORLD")
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       console.log('user', user);
       setUser(user);
-    })
+    }),
+    console.log(FIREBASE_API_KEY, "HELLO WROLD");
   }, [])
   return (
     <NavigationContainer>

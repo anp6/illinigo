@@ -5,6 +5,9 @@ import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import * as Font from 'expo-font'
 import * as ImagePicker from 'expo-image-picker';
+import {
+  FIREBASE_URL
+} from '@env';
 
 
 export default function Login() {
@@ -32,7 +35,8 @@ export default function Login() {
   const uploadImage = async (imageUri) => {
     const fileName = `uploads/${new Date().toISOString()}_${imageUri.split('/').pop()}`;
     console.log(fileName)
-    const response = await fetch(`http://localhost:3000/generate-signed-url?fileName=${fileName}`);
+    // http://localhost:3000
+    const response = await fetch(`https://illinigodeployed-1.onrender.com/generate-signed-url?fileName=${fileName}`);
     const { url } = await response.json();
   
     const blob = await fetch(imageUri).then(res => res.blob());
@@ -86,7 +90,7 @@ export default function Login() {
       found: [],
       pfp: pfpUrl,
     };
-    const response = await fetch('http://localhost:3000/create-user', {
+    const response = await fetch(`https://illinigodeployed-1.onrender.com/create-user`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
