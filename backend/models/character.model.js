@@ -17,25 +17,17 @@ const characterSchema = new mongoose.Schema({
     type: String,
     required: [true, "Critter 3D-model render"]
   },// TBD: A method of storing the 3d model of the character
-  spawnLocations: [{
-    // radius: {
-    //   type: Number,
-    //   required: [true, "Spawn radius"],
-    //   default: 1 // if unspecified, the spawn radius is 1m (Subject to change)
-    // },
-    location: // Stores a coordinate point and a radius around the point within which the character can spawn
-    {
-      type: {
-        type: String,
-        enum: ['Point'],
-        required: true
-      },
-      coordinates: {
-        type: [Number], // Format: [<long>, <lat>], longitude range: (-180,180), latitude range(-90,90)
-        required: true
-      }
+  spawnLocations: {
+    type: {
+      type: String,
+      enum: ['Point'], // more  types can be added for multiple types of spawn areas
+      required: true
     },
-  }],
+    coordinates: {
+      type: [Number], //  can vary, but Format: [<long>, <lat>], longitude range: (-180,180), latitude range(-90,90)
+      required: true
+    }
+  },
   spawnProbability: {
     type: Number,
     required: [true, "Spawn probability"],
@@ -53,7 +45,9 @@ const characterSchema = new mongoose.Schema({
   // Beyond MVP: Add Class and Stats
 }, {timestamps: true});
 
-characterSchema.index({ "spawnLocations.coordinates": '2dsphere' });
+
+characterSchema.index({ "spawnLocations": '2dsphere' });
+
 
 const Character = mongoose.model('Character', characterSchema);
 module.exports = Character
