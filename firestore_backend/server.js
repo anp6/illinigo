@@ -1,6 +1,9 @@
 const admin = require('firebase-admin');
 const express = require('express');
 const app = express();
+const sharp = require('sharp');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(express.json());
 
@@ -115,6 +118,26 @@ app.post('/create-user', async (req, res) => {
       res.status(400).send(error.message);
     }
   });
+
+  app.post('/composite-image', upload.single('baseImage'), async (req, res) => {
+    const baseImage = req.file.buffer;
+    const overlayImagePath = './images/222_img.png';
+
+    try {
+        const overlayBuffer = await sharp(overlayImagePath)
+            .resize(100, 100)  
+            .toBuffer();
+
+        const result = await sharp(baseImage)
+            .composite([{ input: overlayBuffer, gravity: 'southeast' }])
+            .toBuffer();
+
+        res.type('png').send(result);
+    } catch (error) {
+        console.error('Error processing image:', error);
+        res.status(500).send('Error processing image');
+    }
+});
 
 
 app.listen(PORT, () => {
