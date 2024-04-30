@@ -1,28 +1,57 @@
-import React from 'react';
-import { StyleSheet, View, TextInput, FlatList, Image, Text, SafeAreaView, TouchableOpacity  } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, TextInput, FlatList, Image, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-// import { NavigationContainer } from '@react-navigation/native';
-import DATA from '../../database.json'
-import Popup from './Popup';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import axios from 'axios'; 
+import Popup from './Popup';  
 
-const Item = ({ image, onPress }) => (
-  <TouchableOpacity onPress={onPress}>
-    <View style={styles.item}>
-      <Image source={{ uri: image }} style={styles.image} />
-    </View>
-  </TouchableOpacity>
-);
+const uid2 = 'SqFQqBCJG2QBIV08c6XNS4AiQmm2';
+
+const Item = ({ item, onPress, foundItems }) => {
+  const isFound = foundItems.includes(item._id);
+  const uid = FIREBASE_AUTH.currentUser.uid;
+
+  return (
+    <TouchableOpacity onPress={() => onPress(item)}>
+      <View style={[styles.item, isFound && styles.foundItem]}>
+        <Image source={{ uri: item.image }} style={styles.image} />
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const Catalog = ({ navigation }) => {
-  const totalItems = DATA.length;
-  const foundItems = DATA.filter(item => item.found).length;
+  const [characters, setCharacters] = useState([]);
+  const [foundItems, setFoundItems] = useState([]);
 
-  console.log(DATA)
+  useEffect(() => {
+    fetchCharacters();
+    fetchMyCharacters();
+  }, []);
+
+  const fetchCharacters = async () => {
+    try {
+      const response = await axios.get('https://illinigodeployed.onrender.com/api/characters'); 
+      setCharacters(response.data);
+    } catch (error) {
+      console.error('Error fetching characters:', error);
+    }
+  };
+
+  const fetchMyCharacters = async() => {
+    try {
+      const response = await axios.get(`https://illinigodeployed-1.onrender.com/user/${uid2}`); 
+      setFoundItems(response.data.found);
+    } catch (error) {
+      console.error('Error fetching my characters:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.catalogTitle}>Catalog</Text> 
-        <Text style={styles.foundText}>Found: {foundItems}/{totalItems}</Text>
+        <Text style={styles.catalogTitle}>Catalog</Text>
+        <Text style={styles.foundText}>Found: {foundItems.length}/2</Text>
       </View>
       <View style={styles.searchContainer}>
         <TextInput
@@ -31,12 +60,13 @@ const Catalog = ({ navigation }) => {
         />
       </View>
       <FlatList
-        data={DATA}
-        renderItem={({ item }) => <Item image={item.image}
-        onPress={() => navigation.navigate('Popup', { image: item.image })} />}
-        keyExtractor={item => item.id}
+        data={characters}
+        renderItem={({ item }) => (
+          <Item item={item} onPress={(item) => navigation.navigate('Popup', { item })} foundItems={foundItems} />
+        )}
+        keyExtractor={(item) => item._id}
         numColumns={3}
-        style={{marginTop: 20}}
+        style={{ marginTop: 20 }}
       />
     </SafeAreaView>
   );
@@ -76,6 +106,9 @@ const styles = StyleSheet.create({
     padding: 20,
     margin: 8,
     borderRadius: 20,
+  },
+  foundItem: {
+    backgroundColor: 'green',
   },
   image: {
     width: 75,

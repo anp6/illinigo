@@ -120,7 +120,7 @@ export default function Login() {
 
 
   if (!fontsLoaded) {
-    return <ActivityIndicator size="large" />; // Or some other placeholder content
+    return <ActivityIndicator size="large" />; 
   }
   return (
     <View style={styles.container}>

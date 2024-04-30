@@ -1,88 +1,41 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Animated } from 'react-native';
-import DATA from '../../database.json';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import axios from 'axios';
 
 const Popup = ({ route }) => {
-  const { image } = route.params;
-  const pokemon = DATA.find(pokemon => pokemon.image === image);
+  const { item, foundItems } = route.params;
+  const [character, setCharacter] = useState(null);
 
-  const [expandedWhite, setExpandedWhite] = useState(false);
-  const [expandedGrey, setExpandedGrey] = useState(false);
-  const [expandedPurple, setExpandedPurple] = useState(false);
-  const [animationWhite] = useState(new Animated.Value(0));
-  const [animationGrey] = useState(new Animated.Value(0));
-  const [animationPurple] = useState(new Animated.Value(0));
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://illinigodeployed.onrender.com/api/characters');
+        const data = response.data;
+        const foundCharacter = data.find(character => character._id === item._id);
+        setCharacter(foundCharacter);
+      } catch (error) {
+        console.error('Error fetching character:', error);
+      }
+    };
 
-  const handleWhitePress = () => {
-    setExpandedWhite(!expandedWhite);
-    Animated.timing(animationWhite, {
-      toValue: expandedWhite ? 0 : 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const handleGreyPress = () => {
-    setExpandedGrey(!expandedGrey);
-    Animated.timing(animationGrey, {
-      toValue: expandedGrey ? 0 : 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const handlePurplePress = () => {
-    setExpandedPurple(!expandedPurple);
-    Animated.timing(animationPurple, {
-      toValue: expandedPurple ? 0 : 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const rectangleHeightWhite = animationWhite.interpolate({
-    inputRange: [0, 1],
-    outputRange: [50, 200], 
-  });
-
-  const rectangleHeightGrey = animationGrey.interpolate({
-    inputRange: [0, 1],
-    outputRange: [50, 200], 
-  });
-
-  const rectangleHeightPurple = animationPurple.interpolate({
-    inputRange: [0, 1],
-    outputRange: [50, 200], 
-  });
+    fetchData();
+  }, [item._id]);
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: image }} style={styles.image} />
-      <Text style={styles.text}>{pokemon ? pokemon.name : 'Unknown Pokémon'}</Text>
-      <TouchableWithoutFeedback onPress={handleGreyPress}>
-        <Animated.View style={[styles.rectangleBehind, { height: rectangleHeightGrey, zIndex: 2 }]}>
-        <Text style={[styles.rectangleText, styles.title]}>Stats</Text>
-      </Animated.View>
-      </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={handlePurplePress}>
-        <Animated.View style={[styles.rectanglePurple, { height: rectangleHeightPurple, zIndex: 1 }]}>
-          <Text style={[styles.rectangleText, styles.title]}>Info</Text>
-          {expandedPurple && 
-            <View style={styles.expandedContent}>
-            </View>
-          }
-        </Animated.View>
-      </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={handleWhitePress}>
-        <Animated.View style={[styles.rectangle, { height: rectangleHeightWhite, zIndex: 3 }]}>
-          <Text style={[styles.rectangleText, styles.title]}>My Snaps</Text>
-          {expandedWhite && 
-            <View style={styles.expandedContent}>
-              <Image source={{ uri: image }} style={styles.image} />
-            </View>
-          }
-        </Animated.View>
-      </TouchableWithoutFeedback>
+      <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
+      <Text style={styles.text}>{character ? character.name : 'Unknown Character'}</Text>
+      <View style={styles.descriptionContainer}>
+        <Text style={styles.description}>{character ? character.description : 'No description available'}</Text>
+      </View>
+      <View style={styles.snapsContainer}>
+        <View style={styles.snapsBox}>
+          <Text style={styles.snapsTitle}>My Snaps:</Text>
+          {foundItems && foundItems.pictures.map((pic, index) => (
+            <Image key={index} source={{ uri: pic }} style={styles.snapsImage} />
+          ))}
+        </View>
+      </View>
     </View>
   );
 };
@@ -90,72 +43,51 @@ const Popup = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F4C279',
-    paddingBottom: 350,
+    paddingTop: 20,
   },
   image: {
     width: 150,
     height: 150,
+    marginBottom: 20,
   },
   text: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  rectangle: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'flex-start', 
+  descriptionContainer: {
+    backgroundColor: '#65b8f7',
+    padding: 10,
+    borderRadius: 10,
     alignItems: 'center',
-    paddingTop: 10, 
-    borderRadius: 20, 
-    overflow: 'hidden', 
+    marginBottom: 20,
   },
-  rectangleBehind: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'grey', 
-    justifyContent: 'flex-start', 
-    alignItems: 'center',
-    paddingTop: 90, 
-    borderRadius: 20, 
-    overflow: 'hidden',
-  },
-  rectanglePurple: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#2457CD', 
-    justifyContent: 'flex-start', 
-    alignItems: 'center',
-    paddingTop: 140, 
-    borderRadius: 20, 
-    overflow: 'hidden',
-  },
-  rectangleText: {
+  description: {
     color: 'black',
     fontSize: 16,
-    paddingTop: 10,
   },
-  title: {
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
+  snapsContainer: {
+    alignItems: 'center',
+    width: '100%',
   },
-  expandedContent: {
-    flex: 1,
-    justifyContent: 'center',
+  snapsBox: {
+    backgroundColor: '#65b8f7',
+    padding: 20,
+    borderRadius: 10,
     alignItems: 'center',
   },
-  centerText: {
-    textAlign: 'center',
+  snapsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  snapsImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
   },
 });
 
