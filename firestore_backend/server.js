@@ -125,11 +125,16 @@ app.post('/create-user', async (req, res) => {
 
     try {
         const overlayBuffer = await sharp(overlayImagePath)
-            .resize(100, 100)  
+            .resize(500, 500)  
             .toBuffer();
 
-        const result = await sharp(baseImage)
-            .composite([{ input: overlayBuffer, gravity: 'southeast' }])
+            const result = await sharp(baseImage)
+            .rotate(90)
+            .composite([{
+              input: overlayBuffer,
+              left: 100,
+              top: 50 
+          }])
             .toBuffer();
 
         res.type('png').send(result);
