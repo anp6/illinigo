@@ -33,7 +33,7 @@ export default function Home({ navigation }) {
       }
       setupWebSocket();
       function setupWebSocket() {
-        ws.current = new WebSocket('ws://10.10.1.17:3001');
+        ws.current = new WebSocket('ws://8.tcp.ngrok.io:10635'); // replace url with your ngrok url
         ws.current.onopen = () => {
           console.log('WebSocket connected');
           startLocationUpdates();
@@ -60,7 +60,7 @@ export default function Home({ navigation }) {
               ws.current.send(JSON.stringify({
                 longitude: newLocation.coords.longitude,
                 latitude: newLocation.coords.latitude,
-                radius: 10 // fixed spawn radius in m
+                radius: 100 // fixed spawn radius in m
               }));
             } else {
               console.log("Location data is not currently available.");

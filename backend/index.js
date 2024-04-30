@@ -30,8 +30,8 @@ app.use(express.urlencoded({extended: false}));
 mongoose.connect(uri)
 .then(() => {
     console.log("Connected to database!");
-    server.listen(3001, () => {
-        console.log('Secure Server and WebSocket server running on port 3001');
+    server.listen(8080, () => {
+        console.log('Secure Server and WebSocket server running on port 8080');
 });
 }).catch((err) => {
     console.log("Connection failed!", err);
