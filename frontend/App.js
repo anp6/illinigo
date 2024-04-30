@@ -95,7 +95,6 @@ function InsideLayout() {
 
 export default function App() {
   const [user, setUser] = useState(null);
-  console.log("HELLO WORLD")
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       console.log('user', user);

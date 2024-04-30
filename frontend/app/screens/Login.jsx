@@ -85,8 +85,7 @@ export default function Login() {
     const userData = {
       id: userCredential.user.uid,
       username: username,
-      pictureids: [],
-      pictures: "",
+      pictures: [],
       found: [],
       pfp: pfpUrl,
     };
