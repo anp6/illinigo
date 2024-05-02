@@ -126,7 +126,7 @@ wss.on('connection', (ws) => {
                             type: "Point",
                             coordinates: [longitude, latitude]
                         },
-                        $maxDistance: 30  // Adjust maxDistance as necessary in meters
+                        $maxDistance: 50  // Adjust maxDistance as necessary in meters
                     }
                 }
             });
@@ -139,8 +139,24 @@ wss.on('connection', (ws) => {
                 ws.send(JSON.stringify(randomCritter)); // Send a random critter
                 console.log('Sent critter:', randomCritter); // Log sent critter
             } else {
+                const crittersNearby = await Character.find({
+                    spawnLocations: {
+                        $nearSphere: {
+                            $geometry: {
+                                type: "Point",
+                                coordinates: [longitude, latitude]
+                            },
+                            $maxDistance: 500  // Adjust maxDistance as necessary in meters
+                        }
+                    }
+                });
+                if (crittersNearby.length > 0) {
+                    console.log("There are ", crittersNearby.length, " critters nearby! Keep looking")
+                } else {
+                    console.log('There are no critters nearby');
+                }
                 ws.send(JSON.stringify({})); // Send an empty object if no critters are found
-                console.log('No critters found within the specified radius. Despawning all.');
+                
             }
         } catch (error) {
             console.error("Failed to fetch critters:", error);

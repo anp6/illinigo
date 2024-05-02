@@ -33,7 +33,7 @@ export default function Home({ navigation }) {
       }
       setupWebSocket();
       function setupWebSocket() {
-        ws.current = new WebSocket('ws://8.tcp.ngrok.io:10635'); // replace url with your ngrok url
+        ws.current = new WebSocket('ws://0.tcp.ngrok.io:14495'); // replace url with your ngrok url
         ws.current.onopen = () => {
           console.log('WebSocket connected');
           startLocationUpdates();
@@ -59,8 +59,7 @@ export default function Home({ navigation }) {
             if (ws.current && ws.current.readyState === WebSocket.OPEN && newLocation && newLocation.coords) {
               ws.current.send(JSON.stringify({
                 longitude: newLocation.coords.longitude,
-                latitude: newLocation.coords.latitude,
-                radius: 100 // fixed spawn radius in m
+                latitude: newLocation.coords.latitude
               }));
             } else {
               console.log("Location data is not currently available.");
@@ -97,10 +96,10 @@ export default function Home({ navigation }) {
       console.log(`Critter ${data.name} has spawned!`);
     } else if (Object.keys(data).length === 0) {
       // there are no critters in range now, despawn everything
-      console.log('No critters are nearby!');
+      console.log('There are no critters in spawn range');
     } else {
       // error, something went wrong in the backend 
-      console.log('Something went wrong in locating critters nearby!');
+      console.log('Something went wrong while finding critters!');
     }
   };
 
