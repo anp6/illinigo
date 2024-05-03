@@ -5,11 +5,10 @@ import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import axios from 'axios'; 
 import Popup from './Popup';  
 
-const uid2 = 'SqFQqBCJG2QBIV08c6XNS4AiQmm2';
+
 
 const Item = ({ item, onPress, foundItems }) => {
   const isFound = foundItems.includes(item._id);
-  const uid = FIREBASE_AUTH.currentUser.uid;
 
   return (
     <TouchableOpacity onPress={() => onPress(item)}>
@@ -23,6 +22,8 @@ const Item = ({ item, onPress, foundItems }) => {
 const Catalog = ({ navigation }) => {
   const [characters, setCharacters] = useState([]);
   const [foundItems, setFoundItems] = useState([]);
+  const [pictureIds, setPicturesIds] = useState([]);
+  const uid = FIREBASE_AUTH.currentUser.uid;
 
   useEffect(() => {
     fetchCharacters();
@@ -40,8 +41,9 @@ const Catalog = ({ navigation }) => {
 
   const fetchMyCharacters = async() => {
     try {
-      const response = await axios.get(`https://illinigodeployed-1.onrender.com/user/${uid2}`); 
+      const response = await axios.get(`https://illinigodeployed-1.onrender.com/user/${uid}`); 
       setFoundItems(response.data.found);
+      setPicturesIds(response.data.pictures);
     } catch (error) {
       console.error('Error fetching my characters:', error);
     }
@@ -51,7 +53,7 @@ const Catalog = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.catalogTitle}>Catalog</Text>
-        <Text style={styles.foundText}>Found: {foundItems.length}/2</Text>
+        <Text style={styles.foundText}>Found: {foundItems.length}/{characters.length}</Text>
       </View>
       <View style={styles.searchContainer}>
         <TextInput
@@ -62,7 +64,7 @@ const Catalog = ({ navigation }) => {
       <FlatList
         data={characters}
         renderItem={({ item }) => (
-          <Item item={item} onPress={(item) => navigation.navigate('Popup', { item })} foundItems={foundItems} />
+          <Item item={item} onPress={(item) => navigation.navigate('Popup', { item, foundItems, pictureIds})} foundItems={foundItems} />
         )}
         keyExtractor={(item) => item._id}
         numColumns={3}

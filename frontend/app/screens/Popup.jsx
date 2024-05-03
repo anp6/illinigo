@@ -3,8 +3,9 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
 
 const Popup = ({ route }) => {
-  const { item, foundItems } = route.params;
+  const { item, foundItems, pictureIds } = route.params;
   const [character, setCharacter] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -12,6 +13,9 @@ const Popup = ({ route }) => {
         const response = await axios.get('https://illinigodeployed.onrender.com/api/characters');
         const data = response.data;
         const foundCharacter = data.find(character => character._id === item._id);
+        const characterIndex = foundItems.findIndex(item => item === foundCharacter._id);
+        setImageUrl(pictureIds[characterIndex]);
+        console.log(pictureIds[characterIndex], pictureIds, foundItems)
         setCharacter(foundCharacter);
       } catch (error) {
         console.error('Error fetching character:', error);
@@ -31,9 +35,7 @@ const Popup = ({ route }) => {
       <View style={styles.snapsContainer}>
         <View style={styles.snapsBox}>
           <Text style={styles.snapsTitle}>My Snaps:</Text>
-          {foundItems && foundItems.pictures.map((pic, index) => (
-            <Image key={index} source={{ uri: pic }} style={styles.snapsImage} />
-          ))}
+            <Image source={{ uri: imageUrl }} style={styles.snapsImage} />
         </View>
       </View>
     </View>
@@ -85,8 +87,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   snapsImage: {
-    width: 100,
-    height: 100,
+    width: 300,
+    height: 300,
     borderRadius: 10,
   },
 });
