@@ -14,8 +14,8 @@ For more details, view the full project proposal [here](https://docs.google.com/
 <img width="756" alt="Screen Shot 2024-05-03 at 11 32 13 AM" src="https://github.com/CS222-UIUC-SP24/group-project-team-80/assets/113697373/58264943-2d97-4983-87ab-63edac3a318d">
 
 # Developers
-* Amit Krishnaiyer: Coded catalog page, worked on camera feature, set up both MongoDB backends, and working login page
-* Avi Patel: Worked on geolocator and creature MongoDB database.
+* Amit Krishnaiyer: Coded catalog page, worked on camera feature, set up firestore backend, and working login page
+* Avi Patel: Setup MongoDB creature backend, connected frontend with backend through a WebSocket server, integrated geolocation and creature spawning
 * Swathi Sureshmoorthy: Coded the catalog, popup, and profile page & connected with creature MongoDB backend.
 * Nancy Zhang: Worked on AR feature to ensure character shows up on camera.
 
