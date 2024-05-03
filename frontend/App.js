@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import Login from './app/screens/Login';
 import Home from './app/screens/Home';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE_DB } from './FirebaseConfig';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,14 +12,21 @@ import { Icon } from 'react-native-elements';
 import Catalog from './app/screens/Catalog';
 import Profile from './app/screens/Profile';
 import { TouchableOpacity } from 'react-native';
-import {
-  FIREBASE_API_KEY,
-  FIREBASE_AUTH_DOMAIN,
-  FIREBASE_PROJECT_ID,
-  FIREBASE_STORAGE_BUCKET,
-  FIREBASE_MESSAGING_SENDER_ID,
-  FIREBASE_APP_ID
-} from '@env';
+// import {
+//   FIREBASE_API_KEY,
+//   FIREBASE_AUTH_DOMAIN,
+//   FIREBASE_PROJECT_ID,
+//   FIREBASE_STORAGE_BUCKET,
+//   FIREBASE_MESSAGING_SENDER_ID,
+//   FIREBASE_APP_ID
+// } from '@env';
+
+const FIREBASE_API_KEY="AIzaSyD0Ap1uUFHhCRHMt2_531kVOg7FCgREj3M"
+const FIREBASE_AUTH_DOMAIN="illinigo-d848b.firebaseapp.com"
+const FIREBASE_PROJECT_ID="illinigo-d848b"
+const FIREBASE_STORAGE_BUCKET="illinigo-d848b.appspot.com"
+const FIREBASE_MESSAGING_SENDER_ID="1098672997563"
+const FIREBASE_APP_ID="1:1098672997563:web:bf8f143175026b3bcc559e"
 
 const Tab = createBottomTabNavigator();
 
@@ -96,12 +103,13 @@ function InsideLayout() {
 export default function App() {
   const [user, setUser] = useState(null);
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log('user', user);
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      console.log('User state changed:', user);
       setUser(user);
-    }),
-    console.log(FIREBASE_API_KEY, "HELLO WROLD");
-  }, [])
+    });
+    return () => unsubscribe(); // This ensures cleanup is called on component unmount
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login'>
