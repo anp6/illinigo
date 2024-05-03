@@ -48,7 +48,7 @@ const Catalog = ({ navigation }) => {
       console.error('Error fetching my characters:', error);
     }
   };
-
+  console.log(characters)
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>

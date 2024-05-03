@@ -10,7 +10,6 @@ import { Buffer } from 'buffer';
 
 export default function Home({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null)
-  const [image, setImage] = useState(null);
   const [character, setCharacter] = useState("662ff0246a744b16e07e91dc");
   const cameraRef = useRef(null);
   const uid = FIREBASE_AUTH.currentUser.uid;

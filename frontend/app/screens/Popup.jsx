@@ -27,7 +27,7 @@ const Popup = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
+      <Image source={{ uri: character.image }} style={styles.image} />
       <Text style={styles.text}>{character ? character.name : 'Unknown Character'}</Text>
       <View style={styles.descriptionContainer}>
         <Text style={styles.description}>{character ? character.description : 'No description available'}</Text>
