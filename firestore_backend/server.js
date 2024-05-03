@@ -121,7 +121,7 @@ app.post('/create-user', async (req, res) => {
 
   app.post('/composite-image', upload.single('baseImage'), async (req, res) => {
     const baseImage = req.file.buffer;
-    const overlayImagePath = './images/222_img.png';
+    const overlayImagePath = './images/schrodinger.png';
 
     try {
         const overlayBuffer = await sharp(overlayImagePath)
@@ -132,8 +132,8 @@ app.post('/create-user', async (req, res) => {
             .rotate(90)
             .composite([{
               input: overlayBuffer,
-              left: 100,
-              top: 300 
+              left: 200,
+              top: 500 
           }])
             .toBuffer();
 
