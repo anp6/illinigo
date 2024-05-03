@@ -133,7 +133,7 @@ app.post('/create-user', async (req, res) => {
             .composite([{
               input: overlayBuffer,
               left: 100,
-              top: 50 
+              top: 300 
           }])
             .toBuffer();
 
