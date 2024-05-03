@@ -16,10 +16,16 @@ export default function Home({ navigation }) {
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
   const [location, setLocation] = useState(null);
   const [image, setImage] = useState(null);
-  const [character, setCharacter] = useState("662ff0246a744b16e07e91dc");
+  const [character, setCharacter] = useState({image: null, id: null});
   const cameraRef = useRef(null);
   const locationSubscription = useRef(null);
   const ws = useRef(null);  const uid = FIREBASE_AUTH.currentUser.uid;
+  const images = {
+    grain: require('../../assets/222_img.png'),
+    pikachu: require('../../assets/pikachu.png'),
+    schrodinger: require('../../assets/schrodinger.png')
+    // Add other images similarly
+  };
 
 
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function Home({ navigation }) {
       }
       setupWebSocket();
       function setupWebSocket() {
-        ws.current = new WebSocket('ws://0.tcp.ngrok.io:17099'); // replace url with your ngrok url
+        ws.current = new WebSocket('ws://0.tcp.ngrok.io:11040'); // replace url with your ngrok url
         ws.current.onopen = () => {
           console.log('WebSocket connected');
           startLocationUpdates();
@@ -169,9 +175,11 @@ export default function Home({ navigation }) {
     if (Object.keys(data).length > 0 && data.name) {
       // despawn all critters (currently only one can spawn at a time)
       // spawn the the critter returned by the backend
+      setCharacter({image: data.image, id: data.id});
       console.log(`Critter ${data.name} has spawned!`);
     } else if (Object.keys(data).length === 0) {
       // there are no critters in range now, despawn everything
+      setCharacter({image: null, id: null});
       console.log('There are no critters in spawn range');
     } else {
       // error, something went wrong in the backend 
@@ -187,7 +195,7 @@ export default function Home({ navigation }) {
                 base64: true
             });
 
-            if (photo && character != null) {
+            if (photo && character.id != null) {
                 const formData = new FormData();
                 formData.append('baseImage', {
                     uri: photo.uri,
@@ -203,7 +211,7 @@ export default function Home({ navigation }) {
                 });
                 const base64Image = `data:image/png;base64,${Buffer.from(response.data, 'binary').toString('base64')}`;
                 console.log(base64Image)
-                handleUserUpdate(character, base64Image);
+                handleUserUpdate(character.id, base64Image);
             }
         } catch (e) {
             console.error('Error taking picture and processing:', e);
@@ -222,10 +230,10 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <Camera style={styles.camera} ref={cameraRef} type={CameraType.back}>
-          <Image
-              source={require('../../assets/222_img.png')} // Adjust the path to where your image is stored
+        {character.image !== null ? <Image
+              source={require(character.image)} // Adjust the path to where your image is stored
               style={styles.overlayImage}
-          />
+          /> : <View></View>}
           <View style={styles.buttonContainer}>
               <Button title={'Take a Picture'} onPress={takePicture} />
           </View>
