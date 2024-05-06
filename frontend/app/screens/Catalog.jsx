@@ -9,11 +9,10 @@ import Popup from './Popup';
 
 const Item = ({ item, onPress, foundItems }) => {
   const isFound = foundItems.includes(item._id);
-
   return (
     <TouchableOpacity onPress={() => onPress(item)}>
       <View style={[styles.item, isFound && styles.foundItem]}>
-        <Image source={{ uri: item.image }} style={styles.image} />
+        <Image source={{uri: item.image}} style={styles.image} />
       </View>
     </TouchableOpacity>
   );
@@ -33,6 +32,7 @@ const Catalog = ({ navigation }) => {
   const fetchCharacters = async () => {
     try {
       const response = await axios.get('https://illinigodeployed.onrender.com/api/characters'); 
+      console.log(response.data, "HELLO")
       setCharacters(response.data);
     } catch (error) {
       console.error('Error fetching characters:', error);
@@ -48,7 +48,6 @@ const Catalog = ({ navigation }) => {
       console.error('Error fetching my characters:', error);
     }
   };
-  console.log(characters)
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>

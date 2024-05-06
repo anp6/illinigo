@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import axios from 'axios';
 
 const Popup = ({ route }) => {
@@ -15,7 +15,7 @@ const Popup = ({ route }) => {
         const foundCharacter = data.find(character => character._id === item._id);
         const characterIndex = foundItems.findIndex(item => item === foundCharacter._id);
         setImageUrl(pictureIds[characterIndex]);
-        console.log(pictureIds[characterIndex], pictureIds, foundItems)
+        console.log(pictureIds[characterIndex], pictureIds, foundItems, characterIndex, item._id)
         setCharacter(foundCharacter);
       } catch (error) {
         console.error('Error fetching character:', error);
@@ -25,9 +25,11 @@ const Popup = ({ route }) => {
     fetchData();
   }, [item._id]);
 
+  const uri = character && character.image ? character.image : "swathi"; // simplified logic
+
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: character.image }} style={styles.image} />
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <Image source={{ uri }} style={styles.image} />
       <Text style={styles.text}>{character ? character.name : 'Unknown Character'}</Text>
       <View style={styles.descriptionContainer}>
         <Text style={styles.description}>{character ? character.description : 'No description available'}</Text>
@@ -35,20 +37,20 @@ const Popup = ({ route }) => {
       <View style={styles.snapsContainer}>
         <View style={styles.snapsBox}>
           <Text style={styles.snapsTitle}>My Snaps:</Text>
-            <Image source={{ uri: imageUrl }} style={styles.snapsImage} />
+          <Image source={{ uri: imageUrl }} style={styles.snapsImage} />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#F4C279',
-    paddingTop: 20,
+  },
+  contentContainer: {
+    alignItems: 'center', // Centralize content
+    paddingVertical: 20, // Add padding for scrollable area
   },
   image: {
     width: 150,
@@ -72,8 +74,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   snapsContainer: {
-    alignItems: 'center',
     width: '100%',
+    alignItems: 'center',
   },
   snapsBox: {
     backgroundColor: '#65b8f7',
@@ -88,8 +90,10 @@ const styles = StyleSheet.create({
   },
   snapsImage: {
     width: 300,
-    height: 300,
+    height: 300, // Removed conflicting height property
     borderRadius: 10,
+    resizeMode: 'cover', // Ensures the image covers the area and may clip as needed
+    height: '100%',
   },
 });
 

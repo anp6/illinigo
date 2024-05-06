@@ -45,15 +45,15 @@ const Profile = () => {
       <View style={styles.blueBox}>
         <View style={styles.personalInfoBox}>
           <Text style={styles.personalInfoLabel}>First Name:</Text>
-          <Text style={styles.personalInfoValue}>John</Text>
+          <Text style={styles.personalInfoValue}>Amit</Text>
         </View>
         <View style={styles.personalInfoBox}>
           <Text style={styles.personalInfoLabel}>Last Name:</Text>
-          <Text style={styles.personalInfoValue}>Doe</Text>
+          <Text style={styles.personalInfoValue}>Krishnaiyer</Text>
         </View>
         <View style={styles.personalInfoBox}>
           <Text style={styles.personalInfoLabel}>Email:</Text>
-          <Text style={styles.personalInfoValue}>johndoe@example.com</Text>
+          <Text style={styles.personalInfoValue}>amitlk2@illinois.edu</Text>
         </View>
         <View style={styles.personalInfoBox}>
           <Text style={styles.personalInfoLabel}>Password:</Text>

@@ -20,12 +20,6 @@ export default function Home({ navigation }) {
   const cameraRef = useRef(null);
   const locationSubscription = useRef(null);
   const ws = useRef(null);  const uid = FIREBASE_AUTH.currentUser.uid;
-  const images = {
-    grain: require('../../assets/222_img.png'),
-    pikachu: require('../../assets/pikachu.png'),
-    schrodinger: require('../../assets/schrodinger.png')
-    // Add other images similarly
-  };
 
 
   useEffect(() => {
@@ -44,7 +38,7 @@ export default function Home({ navigation }) {
       }
       setupWebSocket();
       function setupWebSocket() {
-        ws.current = new WebSocket('ws://0.tcp.ngrok.io:11040'); // replace url with your ngrok url
+        ws.current = new WebSocket('ws://0.tcp.ngrok.io:18579'); // replace url with your ngrok url
         ws.current.onopen = () => {
           console.log('WebSocket connected');
           startLocationUpdates();
@@ -172,10 +166,12 @@ export default function Home({ navigation }) {
   const handleCritter = (data) => {
     // critter spawn logic (AR goes here!)
     console.log(data);
+    console.log("HELLo")
     if (Object.keys(data).length > 0 && data.name) {
       // despawn all critters (currently only one can spawn at a time)
       // spawn the the critter returned by the backend
-      setCharacter({image: data.image, id: data.id});
+      console.log(data, 'BLEGH')
+      setCharacter({image: data.image, id: data._id});
       console.log(`Critter ${data.name} has spawned!`);
     } else if (Object.keys(data).length === 0) {
       // there are no critters in range now, despawn everything
@@ -230,8 +226,8 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <Camera style={styles.camera} ref={cameraRef} type={CameraType.back}>
-        {character.image !== null ? <Image
-              source={require(character.image)} // Adjust the path to where your image is stored
+        {character.name !== null ? <Image
+              source={{uri: character.image}} // Adjust the path to where your image is stored
               style={styles.overlayImage}
           /> : <View></View>}
           <View style={styles.buttonContainer}>
