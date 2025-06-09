@@ -151,6 +151,8 @@ My work formed the foundational backbone of the application, enabling the core g
 
 -   **UI/UX Design**:
     -   Helped design several UI/UX elements including the main page, catalog, creature pages, and more and created comprehensive mockups to inform the frontend development process
+ 
+![IlliniGo App Mockup](./assets/mockup.png)
 
 #### Other Contributors
 
